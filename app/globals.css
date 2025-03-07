@@ -1,24 +1,303 @@
-@import "tailwindcss";
+/* app/globals.css - Add these after your existing styles */
+/* app/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@theme {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Your custom CSS can go here */
+/* Customize badge colors */
+.bg-green-500 {
+  background-color: hsl(142.1 76.2% 36.3%);
 }
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+.hover\:bg-green-600:hover {
+  background-color: hsl(142.1 70.6% 45.3%);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+.bg-red-50 {
+  background-color: hsl(0 86% 97.3%);
+}
+
+.border-red-200 {
+  border-color: hsl(0 96% 89%);
+}
+
+.text-red-600 {
+  color: hsl(0 72.2% 50.6%);
+}
+
+.bg-green-50 {
+  background-color: hsl(138 76% 97%);
+}
+
+.border-green-200 {
+  border-color: hsl(142 60% 86%);
+}
+
+.text-green-600 {
+  color: hsl(142.1 70.6% 45.3%);
+}
+
+/* Improve card hover effects */
+.card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+/* Improve badge styling */
+.badge {
+  font-weight: 500;
+}
+
+/* Add responsive padding */
+@media (max-width: 640px) {
+  .page-container {
+    padding: 1rem;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+/* Add this to your globals.css file */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+/* Add this to your globals.css file */
+.category-items {
+  transition: all 0.2s ease-in-out;
+}
+
+.category-items-enter {
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+}
+
+.category-items-enter-active,
+.category-items-enter-done {
+  opacity: 1;
+  max-height: 500px;
+  overflow: hidden;
+}
+
+.category-items-exit {
+  opacity: 1;
+  max-height: 500px;
+  overflow: hidden;
+}
+
+.category-items-exit-active {
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+}
+
+.nav-button:hover {
+  background-color: rgba(var(--primary-rgb), 0.05);
+}
+/* globals.css */
+.category-items {
+  transition: all 0.2s ease-in-out;
+  overflow: hidden;
+}
+
+/* Add to globals.css */
+.category-items {
+  transition: max-height 0.2s ease-in-out, opacity 0.2s ease-in-out;
+  overflow: hidden;
+}
+
+.nav-button:hover {
+  background-color: rgba(var(--primary-rgb), 0.05);
+}
+
+/* Add this if you don't have CSS variables for primary color */
+:root {
+  --primary-rgb: 0, 112, 243;
+}/* Add to globals.css */
+.category-items {
+  transition: all 0.2s ease-in-out;
+}
+
+.nav-button:hover {
+  background-color: rgba(var(--primary-rgb), 0.05);
+}
+
+/* Add this if you don't have CSS variables for primary color */
+:root {
+  --primary-rgb: 0, 112, 243;
+}
+/* Add to globals.css */
+@keyframes slideDown {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+
+  to {
+    max-height: 1000px;
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    max-height: 1000px;
+    opacity: 1;
+  }
+
+  to {
+    max-height: 0;
+    opacity: 0;
+  }
+}
+
+.branch-content-open {
+  animation: slideDown 0.3s ease-out forwards;
+  overflow: hidden;
+}
+
+.branch-content-closed {
+  animation: slideUp 0.3s ease-out forwards;
+  overflow: hidden;
+}
+/* Add to globals.css */
+@keyframes pulse-border {
+  0% {
+    border-color: hsl(var(--primary) / 0.3);
+  }
+
+  50% {
+    border-color: hsl(var(--primary) / 0.6);
+  }
+
+  100% {
+    border-color: hsl(var(--primary) / 0.3);
+  }
+}
+
+.add-branch-card {
+  animation: pulse-border 3s infinite;
+  transition: all 0.3s ease;
+}
+
+.add-branch-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  animation: none;
+  border-color: hsl(var(--primary) / 0.7);
+}
+
+.quick-access-card {
+  transition: all 0.2s ease;
+}
+
+.quick-access-card:hover {
+  transform: translateY(-3px);
+}
+/* Add to globals.css */
+@keyframes pulse-border {
+  0% {
+    border-color: hsl(var(--primary) / 0.3);
+  }
+
+  50% {
+    border-color: hsl(var(--primary) / 0.6);
+  }
+
+  100% {
+    border-color: hsl(var(--primary) / 0.3);
+  }
+}
+
+.add-branch-card {
+  animation: pulse-border 3s infinite;
+  transition: all 0.3s ease;
+}
+
+.add-branch-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  animation: none;
+  border-color: hsl(var(--primary) / 0.7);
+}
+
+.quick-access-card {
+  transition: all 0.2s ease;
+}
+
+.quick-access-card:hover {
+  transform: translateY(-3px);
 }
