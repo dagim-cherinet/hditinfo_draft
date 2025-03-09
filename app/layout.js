@@ -11,7 +11,7 @@ export default function RootLayout({ children }) {
         <link rel="preload" href="/logo.png" as="image" />
       </head>
       <body className="min-h-screen bg-background">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <BankProvider>{children}</BankProvider>
         </ThemeProvider>
       </body>

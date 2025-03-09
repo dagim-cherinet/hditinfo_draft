@@ -167,7 +167,7 @@ export default function Sidebar() {
                   <div>
                     <NavButton
                       icon={Network}
-                      label="IP Addresses"
+                      label="Network Details"
                       isActive={
                         selectedBranch?.branchId === branch.branchId &&
                         selectedCategory === "ipAddresses" &&

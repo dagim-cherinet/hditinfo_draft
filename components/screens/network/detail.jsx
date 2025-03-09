@@ -11,16 +11,21 @@ import {
   Server,
   Copy,
   CheckCircle,
+  Wifi,
+  Terminal,
 } from "lucide-react";
 import { useState } from "react";
+import { useBankContext } from "@/app/context/bank-context";
 
 export default function NetworkDetail({ branch, type }) {
   const [copied, setCopied] = useState(false);
+  const [copiedField, setCopiedField] = useState("");
 
   // Helper function to copy text to clipboard
-  const copyToClipboard = (text) => {
+  const copyToClipboard = (text, field) => {
     navigator.clipboard.writeText(text);
     setCopied(true);
+    setCopiedField(field);
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -31,10 +36,10 @@ export default function NetworkDetail({ branch, type }) {
         return Globe;
       case "lanIp":
         return Laptop;
-      case "routerConfig":
-        return Server;
-      case "switchConfig":
-        return Network;
+      case "tunnel":
+        return Terminal;
+      case "connection":
+        return Wifi;
       default:
         return Network;
     }
@@ -47,212 +52,163 @@ export default function NetworkDetail({ branch, type }) {
         return "WAN IP Configuration";
       case "lanIp":
         return "LAN IP Configuration";
-      case "routerConfig":
-        return "Router Configuration";
-      case "switchConfig":
-        return "Switch Configuration";
+      case "tunnel":
+        return "Tunnel Configuration";
+      case "connection":
+        return "Connection Details";
       default:
         return "Network Configuration";
     }
   };
 
-  // Get data based on detail type
-  const getData = () => {
-    switch (type) {
-      case "wanIp":
-        return {
-          ip: branch.ipAddresses.wanIp,
-          subnet: branch.ipAddresses.wanSubnet || "255.255.255.0",
-          gateway: branch.ipAddresses.wanGateway || "10.0.0.1",
-          dns: branch.ipAddresses.dns || ["8.8.8.8", "8.8.4.4"],
-          provider: branch.ipAddresses.provider || "Ethio Telecom",
-        };
-      case "lanIp":
-        return {
-          ip: branch.ipAddresses.lanIp,
-          subnet: branch.ipAddresses.lanSubnet || "255.255.255.0",
-          dhcpRange:
-            branch.ipAddresses.dhcpRange || "192.168.1.100 - 192.168.1.200",
-          vlan: branch.ipAddresses.vlan || "VLAN 1 (Default)",
-        };
-      case "routerConfig":
-        return {
-          model: branch.networkDevices?.router?.model || "Cisco 2900 Series",
-          firmware: branch.networkDevices?.router?.firmware || "15.7(3)M3",
-          ip: branch.networkDevices?.router?.ip || "192.168.1.1",
-          username: branch.networkDevices?.router?.username || "admin",
-          accessMethod:
-            branch.networkDevices?.router?.accessMethod || "SSH, HTTPS",
-        };
-      case "switchConfig":
-        return {
-          model: branch.networkDevices?.switch?.model || "Cisco Catalyst 2960",
-          firmware: branch.networkDevices?.switch?.firmware || "15.2(2)E5",
-          ip: branch.networkDevices?.switch?.ip || "192.168.1.2",
-          ports: branch.networkDevices?.switch?.ports || "24",
-          vlans: branch.networkDevices?.switch?.vlans || [
-            "VLAN 1 (Default)",
-            "VLAN 10 (Voice)",
-            "VLAN 20 (Data)",
-          ],
-        };
-      default:
-        return {};
-    }
+  // Helper function to render a copyable field
+  const renderCopyableField = (label, value, field) => {
+    if (!value) return null;
+
+    return (
+      <div className="flex items-center justify-between">
+        <div className="text-sm font-medium">{label}</div>
+        <div className="flex items-center">
+          <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm mr-2">
+            {value}
+          </code>
+          <button
+            onClick={() => copyToClipboard(value, field)}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            {copied && copiedField === field ? (
+              <CheckCircle className="h-4 w-4 text-green-500" />
+            ) : (
+              <Copy className="h-4 w-4" />
+            )}
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  // Helper function to render a simple field
+  const renderField = (label, value) => {
+    if (!value) return null;
+
+    return (
+      <div className="flex items-center justify-between">
+        <div className="text-sm font-medium">{label}</div>
+        <div className="text-sm">{value}</div>
+      </div>
+    );
   };
 
   const Icon = getIcon();
   const title = getTitle();
-  const data = getData();
 
   return (
     <PageContainer>
-      <SectionHeader icon={Icon} title={title} subtitle={branch.branchName} />
+      <SectionHeader
+        icon={Icon}
+        title={title}
+        subtitle={branch["Branch Name"]}
+      />
 
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-lg flex items-center justify-between">
             <div className="flex items-center">
               <Icon className="mr-2 h-4 w-4 text-primary" />
-              {title} Details
+              {title}
             </div>
             <Badge variant="outline">
               {type === "wanIp" || type === "lanIp"
                 ? "IP Config"
-                : "Device Config"}
+                : type === "tunnel"
+                ? "Tunnel Config"
+                : "Connection Details"}
             </Badge>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {/* IP Address Details */}
-            {(type === "wanIp" || type === "lanIp") && (
+            {/* WAN IP Configuration */}
+            {type === "wanIp" && (
               <>
-                <div className="flex items-center justify-between">
-                  <div className="text-sm font-medium">IP Address</div>
-                  <div className="flex items-center">
-                    <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm mr-2">
-                      {data.ip}
-                    </code>
-                    <button
-                      onClick={() => copyToClipboard(data.ip)}
-                      className="text-muted-foreground hover:text-foreground"
-                    >
-                      {copied ? (
-                        <CheckCircle className="h-4 w-4 text-green-500" />
-                      ) : (
-                        <Copy className="h-4 w-4" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="text-sm font-medium">Subnet Mask</div>
-                  <div className="text-sm">{data.subnet}</div>
-                </div>
-
-                {type === "wanIp" && (
-                  <>
-                    <div className="flex items-center justify-between">
-                      <div className="text-sm font-medium">Gateway</div>
-                      <div className="text-sm">{data.gateway}</div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div className="text-sm font-medium">DNS Servers</div>
-                      <div className="text-sm">{data.dns.join(", ")}</div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div className="text-sm font-medium">
-                        Service Provider
-                      </div>
-                      <div className="text-sm">{data.provider}</div>
-                    </div>
-                  </>
+                {renderCopyableField(
+                  "WAN IP Address",
+                  branch["WAN Address"],
+                  "wan"
                 )}
-
-                {type === "lanIp" && (
-                  <>
-                    <div className="flex items-center justify-between">
-                      <div className="text-sm font-medium">DHCP Range</div>
-                      <div className="text-sm">{data.dhcpRange}</div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div className="text-sm font-medium">VLAN</div>
-                      <div className="text-sm">{data.vlan}</div>
-                    </div>
-                  </>
-                )}
+                {renderField("Branch SN", branch["SN"])}
+                {renderField("District", branch["District"])}
               </>
             )}
 
-            {/* Router Configuration */}
-            {type === "routerConfig" && (
+            {/* LAN IP Configuration */}
+            {type === "lanIp" && (
               <>
-                <div className="flex items-center justify-between">
-                  <div className="text-sm font-medium">Model</div>
-                  <div className="text-sm">{data.model}</div>
-                </div>
+                {renderCopyableField(
+                  "LAN IP Address",
+                  branch["LAN Address"],
+                  "lan"
+                )}
+                {renderField("Branch SN", branch["SN"])}
+                {renderField("District", branch["District"])}
+              </>
+            )}
 
-                <div className="flex items-center justify-between">
-                  <div className="text-sm font-medium">Firmware Version</div>
-                  <div className="text-sm">{data.firmware}</div>
-                </div>
+            {/* Tunnel Configuration */}
+            {type === "tunnel" && (
+              <>
+                {renderCopyableField(
+                  "Tunnel IP DR-ER11",
+                  branch["Tunnel IP DR-ER11"],
+                  "dr-er11"
+                )}
+                {renderCopyableField(
+                  "Tunnel IP DR-ER12",
+                  branch["Tunnel IP DR-ER12"],
+                  "dr-er12"
+                )}
+                {renderCopyableField(
+                  "Tunnel IP DC-ER21",
+                  branch["Tunnel IP DC-ER21"],
+                  "dc-er21"
+                )}
+                {renderCopyableField(
+                  "Tunnel IP DC-ER22",
+                  branch["Tunnel IP DC-ER22"],
+                  "dc-er22"
+                )}
 
-                <div className="flex items-center justify-between">
-                  <div className="text-sm font-medium">IP Address</div>
-                  <div className="text-sm">{data.ip}</div>
-                </div>
+                <Separator className="my-2" />
 
-                <div className="flex items-center justify-between">
-                  <div className="text-sm font-medium">Login Username</div>
-                  <div className="text-sm">{data.username}</div>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="text-sm font-medium">Access Methods</div>
-                  <div className="text-sm">{data.accessMethod}</div>
+                <div className="text-sm text-muted-foreground">
+                  <p>
+                    These tunnel IPs are used for secure VPN connections between
+                    branch locations and data centers.
+                  </p>
                 </div>
               </>
             )}
 
-            {/* Switch Configuration */}
-            {type === "switchConfig" && (
+            {/* Connection Details */}
+            {type === "connection" && (
               <>
-                <div className="flex items-center justify-between">
-                  <div className="text-sm font-medium">Model</div>
-                  <div className="text-sm">{data.model}</div>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="text-sm font-medium">Firmware Version</div>
-                  <div className="text-sm">{data.firmware}</div>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="text-sm font-medium">IP Address</div>
-                  <div className="text-sm">{data.ip}</div>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="text-sm font-medium">Total Ports</div>
-                  <div className="text-sm">{data.ports}</div>
-                </div>
+                {renderField("Connection Type", branch["Connection Type"])}
+                {renderField("Service Number", branch["Service No."])}
+                {renderField("Account Number", branch["Account No"])}
 
                 <Separator className="my-2" />
 
                 <div className="space-y-2">
-                  <div className="text-sm font-medium">Configured VLANs</div>
+                  <div className="text-sm font-medium">IP Addresses</div>
                   <div className="space-y-1">
-                    {data.vlans.map((vlan, index) => (
-                      <div key={index} className="text-sm flex items-center">
-                        <div className="w-2 h-2 rounded-full bg-primary mr-2"></div>
-                        {vlan}
-                      </div>
-                    ))}
+                    <div className="text-sm flex items-center">
+                      <div className="w-2 h-2 rounded-full bg-blue-500 mr-2"></div>
+                      WAN: {branch["WAN Address"]}
+                    </div>
+                    <div className="text-sm flex items-center">
+                      <div className="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
+                      LAN: {branch["LAN Address"]}
+                    </div>
                   </div>
                 </div>
               </>

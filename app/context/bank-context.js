@@ -8,7 +8,7 @@ import {
   useEffect,
   useCallback,
 } from "react";
-import { bankData } from "../data/bank-data";
+import { bankData } from "../data/new.js";
 
 // Step 1: Create the context
 const BankContext = createContext(undefined);
