@@ -36,7 +36,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // Main Welcome Screen Component
 export default function WelcomeScreen() {
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="h-full overflow-y-auto p-6 max-w-7xl mx-auto">
       {/* 1. Header Section */}
       <HeaderSection />
 
